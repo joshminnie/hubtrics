@@ -1,0 +1,19 @@
+AllCops:
+  DisplayCopNames: true
+
+# -------------------------------------------------------------------------------------------------
+# EXCEPTIONS
+# These are rules that we adapted that are different from the default behavior of Rubocop.
+# -------------------------------------------------------------------------------------------------
+
+# We like a little longer line support, and 131 is an awesome number.
+# See https://en.wikipedia.org/wiki/131_(number)
+Metrics/LineLength:
+  Max: 131
+
+# We use Yardoc to enforce documentation
+Style/Documentation:
+  Enabled: false
+
+Style/SymbolArray:
+  EnforcedStyle: brackets
