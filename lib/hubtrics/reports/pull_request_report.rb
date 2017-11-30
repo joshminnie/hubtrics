@@ -21,21 +21,12 @@ module Hubtrics
 
         pulls = client.pulls(repository, state: 'open')
         pulls.each do |pull|
-          pull = client.pull(repository, pull.number)
+          pull = Hubtrics::PullRequest.fetch(repository, pull.number)
 
-          conflicts << Hubtrics::PullRequest.new(pull) unless pull.mergeable
+          conflicts << pull unless pull.mergeable
 
-          state = client.status(repository, pull.head.sha).state
-
-          key =
-            case state
-            when 'failure' then 'failing'
-            when 'success' then 'passing'
-            else 'pending'
-            end
-
-          status[key] ||= []
-          status[key] << Hubtrics::PullRequest.new(pull)
+          status[pull.state] ||= []
+          status[pull.state] << pull
         end
 
         @content += "# #{conflicts.count} of #{pulls.count} pulls have conflicts with their base branch:\n"
@@ -53,7 +44,7 @@ module Hubtrics
       end
 
       def save_to_gist(gist = nil)
-        raise StandardError, 'Report was blank, so nothing was saved' unless content
+        raise StandardError, 'Report was blank, so nothing was saved' if content.empty?
 
         options = {
           description: "Pull Requests Needing Review - #{Date.today}",
