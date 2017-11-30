@@ -6,10 +6,19 @@ AllCops:
 # These are rules that we adapted that are different from the default behavior of Rubocop.
 # -------------------------------------------------------------------------------------------------
 
+Metrics/AbcSize:
+  Enabled: false
+
+Metrics/BlockLength:
+  Enabled: false
+
 # We like a little longer line support, and 131 is an awesome number.
 # See https://en.wikipedia.org/wiki/131_(number)
 Metrics/LineLength:
   Max: 131
+
+Metrics/MethodLength:
+  Enabled: false
 
 # We use Yardoc to enforce documentation
 Style/Documentation:

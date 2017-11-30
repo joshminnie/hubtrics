@@ -3,9 +3,19 @@ GEM
   specs:
     addressable (2.5.2)
       public_suffix (>= 2.0.2, < 4.0)
+    axiom-types (0.1.1)
+      descendants_tracker (~> 0.0.4)
+      ice_nine (~> 0.11.0)
+      thread_safe (~> 0.3, >= 0.3.1)
     byebug (9.1.0)
+    coercible (1.0.0)
+      descendants_tracker (~> 0.0.1)
+    descendants_tracker (0.0.4)
+      thread_safe (~> 0.3, >= 0.3.1)
+    equalizer (0.0.11)
     faraday (0.13.1)
       multipart-post (>= 1.2, < 3)
+    ice_nine (0.11.2)
     multipart-post (2.0.0)
     netrc (0.11.0)
     octokit (4.7.0)
@@ -14,6 +24,12 @@ GEM
     sawyer (0.8.1)
       addressable (>= 2.3.5, < 2.6)
       faraday (~> 0.8, < 1.0)
+    thread_safe (0.3.6)
+    virtus (1.0.5)
+      axiom-types (~> 0.1)
+      coercible (~> 1.0)
+      descendants_tracker (~> 0.0, >= 0.0.3)
+      equalizer (~> 0.0, >= 0.0.9)
 
 PLATFORMS
   ruby
@@ -22,6 +38,7 @@ DEPENDENCIES
   byebug
   netrc (~> 0.11.0)
   octokit (~> 4.7.0)
+  virtus (~> 1.0.5)
 
 BUNDLED WITH
    1.16.0

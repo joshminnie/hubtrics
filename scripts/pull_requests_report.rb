@@ -6,12 +6,12 @@ require 'yaml'
 
 require_relative '../lib/hubtrics'
 
-options = {}
+options = { client: {} }
 OptionParser.new do |opts|
   opts.banner = 'Usage: pull_requests_report.rb [options]'
   opts.program_name = 'Hubtrics: GitHub-based reports and metrics'
 
-  opts.on('-r REPO', '--repository REPO', 'Repository to run this report against') do |repository|
+  opts.on('-r REPO', '--repository REPOSITORY', 'Repository to run this report against') do |repository|
     options[:repository] = repository
   end
 
@@ -20,13 +20,25 @@ OptionParser.new do |opts|
   end
 
   options[:config] = File.expand_path('../config/secrets.yml', __dir__)
-  opts.on('-c CONFIG', '--config CONFIG', String, 'Path to overriding config file') do |config|
+  opts.on('-c CONFIG', '--config CONFIG', String, 'Path to config file') do |config|
     options[:config] = config
   end
 
-  options[:netrc] = false
+  config = YAML.load_file(options[:config]).fetch('client', {})
+
+  options[:client][:login] = config.fetch('login', nil)
+  opts.on('--login LOGIN', String, 'Login for your GitHub account') do |login|
+    options[:client][:login] = login
+  end
+
+  options[:client][:access_token] = config.fetch('access_token', nil)
+  opts.on('--access-token TOKEN', String, 'OAuth access token for your GitHub account') do |token|
+    options[:client][:access_token] = token
+  end
+
+  options[:client][:netrc] = config.fetch('netrc', false)
   opts.on('--[no-]netrc', 'Use .netrc to connect') do |netrc|
-    options[:netrc] = netrc
+    options[:client][:netrc] = netrc
   end
 
   opts.on('-h', '--help', 'Display this screen') do
@@ -35,4 +47,9 @@ OptionParser.new do |opts|
   end
 end.parse!
 
-p options
+client = Hubtrics.client(options[:client])
+report = Hubtrics::Reports::PullRequestReport.new(client, options[:repository])
+report.generate
+gist = report.save_to_gist(options[:gist])
+
+Hubtrics.say("Report was written to:\n#{gist.html_url}")
