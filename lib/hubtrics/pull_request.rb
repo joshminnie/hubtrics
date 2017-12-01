@@ -1,6 +1,7 @@
 module Hubtrics
   class PullRequest < Hubtrics::Base
     attribute :id, Integer
+    attribute :number, Integer
     attribute :repository, String
     attribute :sha, String
     attribute :title, String
@@ -34,6 +35,10 @@ module Hubtrics
 
     def to_markdown
       "[#{title}](#{html_url}) - [@#{user[:login]}](#{user[:html_url]})"
+    end
+
+    def to_a
+      [user.login, base.ref, state, !mergeable, title, html_url]
     end
   end
 end
