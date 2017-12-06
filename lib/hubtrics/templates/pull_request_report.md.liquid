@@ -1,0 +1,30 @@
+{% for item in data %}
+  {% if item[1].size == 0 %}
+    {% continue %}
+  {% endif %}
+# {{ item[0] | capitalize }}
+
+{% case item[0] %}
+{% when 'conflicts' %}
+_{{ item[1].size }} of {{ total_pulls }} pulls have conflicts with the base branch_
+{% when 'failing' %}
+_{{ item[1].size }} of {{ total_pulls }} pulls are {{ item[0] }} one or more integrations_
+{% else %}
+_{{ item[1].size }} of {{ total_pulls }} pulls are {{ item[0] }} integrations_
+{% endcase %}
+
+<table>
+  <tr>
+    <th>Pull</th>
+    <th>Base</th>
+    <th>Author</th>
+  </tr>
+  {% for pull in item[1] %}
+  <tr>
+    <td><a href="https://github.com/{{ pull.repository }}/pull/{{ pull.number }}" title="#{{ pull.number }} - {{ pull.title }}">#{{ pull.number }} - {{ pull.title | truncate: 24, '...' }}</a></td>
+    <td><a href="https://github.com/{{ pull.repository }}/tree/{{ pull.base }}" title="{{ pull.base }}">{{ pull.base | truncate: 24, '...' }}</a></td>
+    <td><a href="https://github.com/{{ pull.user }}">@{{ pull.user }}</a></td>
+  </tr>
+  {% endfor %}
+</table>
+{% endfor %}

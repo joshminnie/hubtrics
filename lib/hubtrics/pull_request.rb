@@ -23,6 +23,7 @@ module Hubtrics
     def initialize(*args)
       super
       @state = client.status(head.repo.full_name, head.sha).state
+      @repository = head.repo.full_name
     end
 
     def state
@@ -31,14 +32,6 @@ module Hubtrics
       when 'success' then 'passing'
       else 'pending'
       end
-    end
-
-    def to_markdown
-      "[#{title}](#{html_url}) - [@#{user[:login]}](#{user[:html_url]})"
-    end
-
-    def to_a
-      [user.login, base.ref, state, !mergeable, title, html_url]
     end
   end
 end

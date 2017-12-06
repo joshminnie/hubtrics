@@ -1,55 +1,40 @@
+require 'liquid'
+
 module Hubtrics
   module Reports
     class PullRequestReport
       attr_reader :client
 
-      attr_reader :content
+      attr_reader :report
 
       attr_reader :repository
 
       def initialize(client, repository)
         @client = client
         @repository = repository
-        @content = ''
       end
 
       def generate
-        @content = '' # reset the content
-
-        status = {}
-        conflicts = []
+        data = { 'conflicts' => [], 'failing' => [], 'pending' => [], 'passing' => [] }
 
         pulls = client.pulls(repository, state: 'open')
         pulls.each do |pull|
           pull = Hubtrics::PullRequest.fetch(repository, pull.number)
 
-          conflicts << pull unless pull.mergeable
-
-          status[pull.state] ||= []
-          status[pull.state] << pull
+          data['conflicts'] << pull.to_h unless pull.mergeable
+          data[pull.state] << pull.to_h
         end
 
-        @content += "# #{conflicts.count} of #{pulls.count} pulls have conflicts with their base branch:\n"
-        conflicts.each { |pull| @content += "- #{pull.to_markdown}\n" }
-
-        status.each_key do |key|
-          list = status[key].compact
-          next if list.empty?
-
-          @content += "# #{list.count} of #{pulls.count} pulls are #{key} CI:\n"
-          list.each { |pull| @content += "- #{pull.to_markdown}\n" }
-        end
-
-        @content
+        @report = template.render('data' => data, 'total_pulls' => pulls.count).strip
       end
 
       def save_to_gist(gist = nil)
-        raise StandardError, 'Report was blank, so nothing was saved' if content.empty?
+        raise StandardError, 'Report was blank, so nothing was saved' if report.empty?
 
         options = {
           description: "Pull Requests Needing Review - #{Date.today}",
           public: false,
-          files: { 'pull_requests.md' => { content: content } }
+          files: { 'pull_requests.md' => { content: report } }
         }
 
         if gist
@@ -57,6 +42,12 @@ module Hubtrics
         else
           client.create_gist(options)
         end
+      end
+
+      private
+
+      def template
+        @template ||= Liquid::Template.parse(File.read(File.expand_path('../templates/pull_request_report.md.liquid', __dir__)))
       end
     end
   end
