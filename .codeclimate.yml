@@ -1,0 +1,53 @@
+---
+engines:
+  reek:
+    enabled: true
+  bundler-audit:
+    enabled: true
+  duplication:
+    enabled: true
+    config:
+      languages:
+        ruby:
+          mass_threshold: 40
+  fixme:
+    enabled: false
+  rubocop:
+    enabled: true
+    channel: rubocop-0-49
+  markdownlint:
+    enabled: true
+  grep:
+    enabled: true
+    config:
+      patterns:
+        no-hard-tabs:
+          pattern: "\t"
+          annotation: "Don't use hard tabs"
+          categories: Style
+          content: >
+            Don't use hard tabs, always use 2-space, soft tabs.
+          path_patterns:
+            - "**/*.liquid"
+            - "**/*.rb"
+ratings:
+  paths:
+    - Gemfile.lock
+    - "**.erb"
+    - "**.haml"
+    - "**.rb"
+    - "**.rhtml"
+    - "**.slim"
+    - "**.css"
+    - "**.inc"
+    - "**.js"
+    - "**.jsx"
+    - "**.module"
+    - "**.php"
+    - "**.py"
+exclude_paths:
+  - config/
+  - coverage/
+  - scripts/
+  - spec/
+  - vendor/
