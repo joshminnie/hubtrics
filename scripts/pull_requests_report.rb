@@ -11,13 +11,8 @@ OptionParser.new do |opts|
   opts.banner = 'Usage: pull_requests_report.rb [options]'
   opts.program_name = 'Hubtrics: GitHub-based reports and metrics'
 
-  opts.on('-r REPO', '--repository REPOSITORY', 'Repository to run this report against') do |repository|
-    options[:repository] = repository
-  end
-
-  opts.on('-g GIST', '--gist GIST', String, 'Update the Gist specified by the SHA provided') do |gist|
-    options[:gist] = gist
-  end
+  # -----------------------------------------------------------------------------
+  # BEGIN Authentication options
 
   options[:config] = File.expand_path('../config/secrets.yml', __dir__)
   opts.on('-c CONFIG', '--config CONFIG', String, 'Path to config file') do |config|
@@ -39,6 +34,17 @@ OptionParser.new do |opts|
   options[:client][:netrc] = config.fetch('netrc', false)
   opts.on('--[no-]netrc', 'Use .netrc to connect') do |netrc|
     options[:client][:netrc] = netrc
+  end
+
+  # END Authentication option
+  # -----------------------------------------------------------------------------
+
+  opts.on('--repository REPOSITORY', String, 'Repository to run this report against') do |repository|
+    options[:repository] = repository
+  end
+
+  opts.on('--gist GIST', String, 'Update the Gist specified by the SHA provided') do |gist|
+    options[:gist] = gist
   end
 
   opts.on('-h', '--help', 'Display this screen') do

@@ -48,6 +48,5 @@ ratings:
 exclude_paths:
   - config/
   - coverage/
-  - scripts/
   - spec/
   - vendor/

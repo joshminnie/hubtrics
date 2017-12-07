@@ -1,6 +1,6 @@
 module Hubtrics
   class Base
-    include Virtus.model
+    send(:include, Virtus.model)
 
     attribute :client, Octokit::Client
 

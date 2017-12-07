@@ -20,6 +20,9 @@ Metrics/LineLength:
 Metrics/MethodLength:
   Enabled: false
 
+Style/Alias:
+  EnforcedStyle: prefer_alias_method
+
 # We use Yardoc to enforce documentation
 Style/Documentation:
   Enabled: false

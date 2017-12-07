@@ -8,9 +8,9 @@
 {% when 'conflicts' %}
 _{{ item[1].size }} of {{ total_pulls }} pulls have conflicts with the base branch_
 {% when 'failing' %}
-_{{ item[1].size }} of {{ total_pulls }} pulls are {{ item[0] }} one or more integrations_
+_{{ item[1].size }} of {{ total_pulls }} pulls are {{ item[0] }} one or more continuous integrations checks_
 {% else %}
-_{{ item[1].size }} of {{ total_pulls }} pulls are {{ item[0] }} integrations_
+_{{ item[1].size }} of {{ total_pulls }} pulls are {{ item[0] }} continuous integrations checks_
 {% endcase %}
 
 <table>
