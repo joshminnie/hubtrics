@@ -1,9 +1,15 @@
 module Hubtrics
+  # Represents a commit from the GitHub API.
+  #
+  # @see https://developer.github.com/v3/repos/commits/
   class Commit < Hubtrics::Base
     attribute :ref, String
     attribute :sha, String
     attribute :repo, Hubtrics::Repository
 
+    # String representation of the {Commit}.
+    #
+    # @return [String] The string representation of the {Commit}.
     def to_s
       ref
     end
