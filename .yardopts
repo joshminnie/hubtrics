@@ -1,0 +1,2 @@
+lib/**/*.rb ext/**/*.c - LICENSE
+--readme README.md

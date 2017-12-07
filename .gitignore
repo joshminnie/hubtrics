@@ -1,3 +1,7 @@
+# Configurations
 config/secrets.yml
 
+# Generated files
 .byebug_history
+.yardoc
+doc

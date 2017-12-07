@@ -22,6 +22,7 @@ GEM
     octokit (4.7.0)
       sawyer (~> 0.8.0, >= 0.5.3)
     public_suffix (3.0.1)
+    redcarpet (3.4.0)
     sawyer (0.8.1)
       addressable (>= 2.3.5, < 2.6)
       faraday (~> 0.8, < 1.0)
@@ -31,16 +32,19 @@ GEM
       coercible (~> 1.0)
       descendants_tracker (~> 0.0, >= 0.0.3)
       equalizer (~> 0.0, >= 0.0.9)
+    yard (0.9.12)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
-  byebug
+  byebug (~> 9.1.0)
   liquid (~> 4.0.0)
   netrc (~> 0.11.0)
   octokit (~> 4.7.0)
+  redcarpet (~> 3.4.0)
   virtus (~> 1.0.5)
+  yard (~> 0.9.12)
 
 BUNDLED WITH
    1.16.0
