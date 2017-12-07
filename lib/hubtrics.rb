@@ -20,13 +20,10 @@ module Hubtrics
     @client = Octokit::Client.new(options)
   end
 
-  def self.say(message = nil)
-    puts DIVIDER
-    if block_given?
-      yield
-    else
-      puts message
-    end
-    puts DIVIDER
+  # Renders a message to STDOUT wrapped with the {DIVIDER}.
+  # @param message [String] Message to render.
+  # @return [void]
+  def self.say(message)
+    puts DIVIDER, message, DIVIDER
   end
 end
