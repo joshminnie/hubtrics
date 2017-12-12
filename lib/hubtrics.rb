@@ -9,6 +9,9 @@ module Hubtrics
   require_relative 'hubtrics/repository'
   require_relative 'hubtrics/commit'
   require_relative 'hubtrics/pull_request'
+
+  require_relative 'hubtrics/reports/base'
+  require_relative 'hubtrics/reports/closed_pull_report'
   require_relative 'hubtrics/reports/pull_request_report'
 
   # Common output divider.

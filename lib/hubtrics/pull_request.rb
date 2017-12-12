@@ -45,6 +45,8 @@ module Hubtrics
       when 'success' then 'passing'
       else 'pending'
       end
+    rescue
+      nil
     end
 
     # Gets the name of the repository which is associated with the pull request resides.
@@ -52,6 +54,8 @@ module Hubtrics
     # @return [String] The name of the repository which is associated with the pull request resides.
     def repository
       head.repo.full_name
+    rescue
+      nil
     end
 
     # Gets the list of labels currently applied to the pull request.

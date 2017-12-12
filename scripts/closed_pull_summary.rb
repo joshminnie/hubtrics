@@ -3,13 +3,12 @@
 require 'octokit'
 require 'optparse'
 require 'yaml'
-require 'csv'
 
 require_relative '../lib/hubtrics'
 
 options = { client: {} }
 OptionParser.new do |opts|
-  opts.banner = 'Usage: sync_labels.rb [options]'
+  opts.banner = 'Usage: apply_labels.rb [options]'
   opts.program_name = 'Hubtrics: GitHub-based reports and metrics'
 
   # -----------------------------------------------------------------------------
@@ -40,12 +39,12 @@ OptionParser.new do |opts|
   # END Authentication option
   # -----------------------------------------------------------------------------
 
-  opts.on('--source REPOSITORY', String, 'Repository to copy labels from') do |repository|
-    options[:source] = repository
+  opts.on('--repository REPOSITORY', String, 'Repository to run this report against') do |repository|
+    options[:repository] = repository
   end
 
-  opts.on('--destination REPOSITORY', String, 'Repository to copy labels to') do |repository|
-    options[:destination] = repository
+  opts.on('--gist GIST', String, 'Update the Gist specified by the SHA provided') do |gist|
+    options[:gist] = gist
   end
 
   opts.on('-h', '--help', 'Display this screen') do
@@ -55,22 +54,8 @@ OptionParser.new do |opts|
 end.parse!
 
 client = Hubtrics.client(options[:client])
+report = Hubtrics::Reports::ClosedPullReport.new(client, options[:repository])
+report.generate
+gist = report.save_to_gist(options[:gist])
 
-source_labels = client.labels(options[:source])
-source_labels.each do |label|
-  begin
-    client.update_label(options[:destination], label.name, color: label.color)
-    puts "#{label.name} updated with color ##{label.color}"
-  rescue Octokit::NotFound
-    client.add_label(options[:destination], label.name, label.color)
-    puts "#{label.name} created with color ##{label.color}"
-  end
-end
-
-destination_labels = client.labels(options[:destination])
-destination_labels.each do |label|
-  unless source_labels.map(&:name).include?(label.name)
-    client.delete_label!(options[:destination], label.name)
-    puts "#{label.name} was removed"
-  end
-end
+Hubtrics.say("Report was written to:\n#{gist.html_url}")
