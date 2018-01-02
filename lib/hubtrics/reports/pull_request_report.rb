@@ -3,22 +3,17 @@ require 'liquid'
 module Hubtrics
   module Reports
     class PullRequestReport < Hubtrics::Reports::Base
+      SEARCH_QUERY = 'is:open is:pr review:approved label:auto-tests-passing label:review-approved label:testing-passes'.freeze
+
       # Generates the report content.
       #
       # @return [String] The content for the report.
       def generate
-        data = { 'conflicts' => [], 'failing' => [], 'pending' => [], 'passing' => [] }
-
-        pulls = client.pulls(repository)
-        pulls.each do |pull|
-          pull = Hubtrics::PullRequest.fetch(repository, pull.number)
-
-          # pull.mergeable contains a nil when the check has not been performed yet, so we need to compare against false
-          data['conflicts'] << pull.to_h if pull.mergeable == false
-          data[pull.status] << pull.to_h
-        end
-
-        @report = template.render('data' => data, 'total_pulls' => pulls.count).strip
+        searched_pulls = client.search_issues("repo:#{repository} #{SEARCH_QUERY}").items
+        @data = {
+          'data' => searched_pulls.map { |pull| Hubtrics::PullRequest.fetch(repository, pull.number).to_h },
+          'total_pulls' => searched_pulls.count
+        }
       end
 
       private
@@ -27,21 +22,27 @@ module Hubtrics
       #
       # @return [Liquid::Template] The {Liquid::Template} which can be used to render the report.
       def template
-        @template ||= Liquid::Template.parse(File.read(File.expand_path('../templates/pull_request_report.md.liquid', __dir__)))
+        @template ||= [
+          Liquid::Template.parse(File.read(File.expand_path('../templates/pull_requests_report.md.liquid', __dir__))),
+          Liquid::Template.parse(File.read(File.expand_path('../templates/pull_requests_report.csv.liquid', __dir__)))
+        ]
       end
 
       # Gets the report title.
       #
       # @return [String] The report title.
       def title
-        "Hubtrics: Pull Requests Metrics for #{Date.today}"
+        "Hubtrics: Pull Request Report for #{Date.today}"
       end
 
       # Gets the files for the Gist.
       #
       # @return [Hash] The file hash for the Gist.
       def files
-        { 'metrics.md' => { content: report } }
+        {
+          '1-pulls.md' => { content: template.first.render(data) },
+          '2-pulls.csv' => { content: template.last.render(data) }
+        }
       end
     end
   end

@@ -14,8 +14,6 @@ module Hubtrics
       # @param gist [String] The SHA of the gist to update.
       # @return [Sawyer::Resource] Gist info.
       def save_to_gist(gist = nil)
-        raise StandardError, 'Report was blank, so nothing was saved' if report.empty?
-
         options = { description: title, public: false, files: files }
 
         if gist
@@ -27,7 +25,7 @@ module Hubtrics
 
       private
 
-      attr_reader :client, :repository, :report
+      attr_reader :client, :repository, :data, :report
     end
   end
 end

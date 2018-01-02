@@ -8,7 +8,7 @@ require_relative '../lib/hubtrics'
 
 options = { client: {} }
 OptionParser.new do |opts|
-  opts.banner = 'Usage: apply_labels.rb [options]'
+  opts.banner = 'Usage: pull_requests_report.rb [options]'
   opts.program_name = 'Hubtrics: GitHub-based reports and metrics'
 
   # -----------------------------------------------------------------------------
@@ -43,8 +43,8 @@ OptionParser.new do |opts|
     options[:repository] = repository
   end
 
-  opts.on('--dry-run', 'Runs through the process without making the changes') do |dry_run|
-    options[:dry_run] = dry_run
+  opts.on('--gist GIST', String, 'Update the Gist specified by the SHA provided') do |gist|
+    options[:gist] = gist
   end
 
   opts.on('-h', '--help', 'Display this screen') do
@@ -54,46 +54,8 @@ OptionParser.new do |opts|
 end.parse!
 
 client = Hubtrics.client(options[:client])
-pulls = client.pulls(options[:repository])
+report = Hubtrics::Reports::ContinuousIntegrationReport.new(client, options[:repository])
+report.generate
+gist = report.save_to_gist(options[:gist])
 
-query = "repo:#{options[:repository]} is:open is:pr"
-
-approved_pulls = client.search_issues("#{query} review:approved").items.map { |pull| Hubtrics::PullRequest.new(pull) }
-rejected_pulls = client.search_issues("#{query} review:changes_requested").items.map { |pull| Hubtrics::PullRequest.new(pull) }
-
-pulls.each do |pull|
-  pull = Hubtrics::PullRequest.new(pull)
-
-  original_labels = pull.labels
-  labels = original_labels.dup
-
-  labels = labels.reject { |label| label =~ /^auto-tests-/ }
-  labels <<
-    case pull.status
-    when 'passing' then 'auto-tests-passing'
-    when 'failing' then 'auto-tests-failing'
-    when 'pending' then 'auto-tests-in-progress'
-    end
-
-  labels = labels.reject { |label| label =~ /^review-(approved|rejected)/ }
-  labels <<
-    if labels.include?('review-in-progress')
-      nil
-    elsif approved_pulls.include?(pull)
-      'review-approved'
-    elsif rejected_pulls.include?(pull)
-      'review-rejected'
-    end
-
-  # Clean up the labels
-  labels = labels.compact.sort.uniq
-
-  next if original_labels == labels
-
-  if options[:dry_run]
-    puts "Update #{pull.number}: #{original_labels} with #{labels.sort}"
-  else
-    client.replace_all_labels(pull.repository, pull.number, labels)
-    puts "Updated #{pull.number} with #{labels}"
-  end
-end
+Hubtrics.say("Report was written to:\n#{gist.html_url}")
