@@ -62,10 +62,12 @@ approved_pulls = client.search_issues("#{query} review:approved").items.map { |p
 rejected_pulls = client.search_issues("#{query} review:changes_requested").items.map { |pull| Hubtrics::PullRequest.new(pull) }
 
 pulls.each do |pull|
-  pull = Hubtrics::PullRequest.new(pull)
+  pull = Hubtrics::PullRequest.fetch(options[:repository], pull.number)
 
   original_labels = pull.labels
   labels = original_labels.dup
+
+  labels << 'conflict-with-parent' if pull.mergeable == false
 
   labels = labels.reject { |label| label =~ /^auto-tests-/ }
   labels <<
