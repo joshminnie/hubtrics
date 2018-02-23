@@ -45,7 +45,7 @@ module Hubtrics
       when 'success' then 'passing'
       else 'pending'
       end
-    rescue
+    rescue StandardError
       nil
     end
 
@@ -54,7 +54,7 @@ module Hubtrics
     # @return [String] The name of the repository which is associated with the pull request resides.
     def repository
       head.repo.full_name
-    rescue
+    rescue StandardError
       nil
     end
 
