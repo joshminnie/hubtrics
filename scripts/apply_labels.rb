@@ -67,6 +67,7 @@ pulls.each do |pull|
   original_labels = pull.labels
   labels = original_labels.dup
 
+  labels = labels.reject { |label| label =~ /conflict-with-parent/ }
   labels << 'conflict-with-parent' if pull.mergeable == false
 
   labels = labels.reject { |label| label =~ /^auto-tests-/ }
