@@ -4,13 +4,17 @@ module Hubtrics
   # @see https://developer.github.com/v3/users/
   class User < Hubtrics::Base
     attribute :login, String
-    attribute :html_url, String
+    attribute :url, String
 
     # String representation of the {User}.
     #
     # @return [String] The string representation of the {User}.
     def to_s
       login
+    end
+
+    def html_url=(value)
+      self.url = value
     end
   end
 end

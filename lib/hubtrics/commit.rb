@@ -6,6 +6,9 @@ module Hubtrics
     attribute :ref, String
     attribute :sha, String
     attribute :repo, Hubtrics::Repository
+    attribute :author, Hubtrics::User
+    attribute :committer, Hash
+    attribute :date, DateTime
 
     # String representation of the {Commit}.
     #
