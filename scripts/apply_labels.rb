@@ -53,50 +53,58 @@ OptionParser.new do |opts|
   end
 end.parse!
 
-client = Hubtrics.client(options[:client])
-pulls = client.pulls(options[:repository])
+begin
+  client = Hubtrics.client(options[:client])
+  pulls = client.pulls(options[:repository], state: 'open')
 
-query = "repo:#{options[:repository]} is:open is:pr"
+  query = "repo:#{options[:repository]} is:open is:pr"
 
-approved_pulls = client.search_issues("#{query} review:approved").items.map { |pull| Hubtrics::PullRequest.new(pull) }
-rejected_pulls = client.search_issues("#{query} review:changes_requested").items.map { |pull| Hubtrics::PullRequest.new(pull) }
+  approved_pulls = client.search_issues("#{query} review:approved").items.map(&:number)
+  rejected_pulls = client.search_issues("#{query} review:changes_requested").items.map(&:number)
 
-pulls.each do |pull|
-  pull = Hubtrics::PullRequest.fetch(options[:repository], pull.number)
+  pulls.each do |pull|
+    pull = Hubtrics::PullRequest.fetch(options[:repository], pull.number)
 
-  original_labels = pull.labels
-  labels = original_labels.dup
+    original_labels = pull.labels
+    labels = original_labels.dup
 
-  labels = labels.reject { |label| label =~ /conflict-with-parent/ }
-  labels << 'conflict-with-parent' if pull.mergeable == false
+    labels = labels.reject { |label| label =~ /^conflict-with-parent$/ }
+    labels << 'conflict-with-parent' if pull.mergeable == false
 
-  labels = labels.reject { |label| label =~ /^auto-tests-/ }
-  labels <<
-    case pull.status
-    when 'passing' then 'auto-tests-passing'
-    when 'failing' then 'auto-tests-failing'
-    when 'pending' then 'auto-tests-in-progress'
+    labels = labels.reject { |label| label =~ /^auto-tests-/ }
+    labels <<
+      case pull.status
+      when 'passing' then 'auto-tests-passing'
+      when 'failing' then 'auto-tests-failing'
+      when 'pending' then 'auto-tests-in-progress'
+      end
+
+    labels = labels.reject { |label| label =~ /^review-(approved|rejected|incomplete)/ }
+    labels <<
+      if labels.include?('review-in-progress')
+        nil
+      elsif approved_pulls.include?(pull.number)
+        'review-approved'
+      elsif rejected_pulls.include?(pull.number)
+        'review-rejected'
+      end
+
+    labels = labels.reject { |label| label =~ /^(preproduction|production)$/ }
+    labels << pull.base.to_s if %w[production preproduction].include?(pull.base.to_s)
+
+    # Clean up the labels
+    labels = labels.compact.sort.uniq
+
+    next if original_labels == labels
+
+    if options[:dry_run]
+      puts "Update #{pull.number}: #{original_labels} with #{labels.sort}"
+    else
+      client.replace_all_labels(pull.repository, pull.number, labels)
+      puts "Updated #{pull.number} with #{labels}"
     end
-
-  labels = labels.reject { |label| label =~ /^review-(approved|rejected)/ }
-  labels <<
-    if labels.include?('review-in-progress')
-      nil
-    elsif approved_pulls.include?(pull)
-      'review-approved'
-    elsif rejected_pulls.include?(pull)
-      'review-rejected'
-    end
-
-  # Clean up the labels
-  labels = labels.compact.sort.uniq
-
-  next if original_labels == labels
-
-  if options[:dry_run]
-    puts "Update #{pull.number}: #{original_labels} with #{labels.sort}"
-  else
-    client.replace_all_labels(pull.repository, pull.number, labels)
-    puts "Updated #{pull.number} with #{labels}"
   end
+rescue Octokit::TooManyRequests => too_many_requests
+  puts too_many_requests.response_headers.inspect
+  puts too_many_requests.methods.inspect
 end
