@@ -31,6 +31,7 @@ module Hubtrics
     def initialize(*args)
       super
       @status = nil
+      @labels = nil
     end
 
     # Gets the combined status of continuous integration checks for the pull request.
@@ -53,7 +54,7 @@ module Hubtrics
     #
     # @return [String] The name of the repository which is associated with the pull request resides.
     def repository
-      head.repo.full_name
+      base.repo.full_name
     rescue StandardError
       nil
     end
