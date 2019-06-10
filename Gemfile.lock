@@ -7,22 +7,22 @@ GEM
       descendants_tracker (~> 0.0.4)
       ice_nine (~> 0.11.0)
       thread_safe (~> 0.3, >= 0.3.1)
-    byebug (10.0.2)
+    byebug (11.0.1)
     coercible (1.0.0)
       descendants_tracker (~> 0.0.1)
-    concurrent-ruby (1.1.4)
+    concurrent-ruby (1.1.5)
     descendants_tracker (0.0.4)
       thread_safe (~> 0.3, >= 0.3.1)
     equalizer (0.0.11)
     faraday (0.15.4)
       multipart-post (>= 1.2, < 3)
-    i18n (1.5.1)
+    i18n (1.6.0)
       concurrent-ruby (~> 1.0)
     ice_nine (0.11.2)
-    liquid (4.0.1)
+    liquid (4.0.3)
     multipart-post (2.0.0)
     netrc (0.11.0)
-    octokit (4.12.0)
+    octokit (4.13.0)
       sawyer (~> 0.8.0, >= 0.5.3)
     public_suffix (3.0.3)
     redcarpet (3.4.0)
@@ -35,20 +35,20 @@ GEM
       coercible (~> 1.0)
       descendants_tracker (~> 0.0, >= 0.0.3)
       equalizer (~> 0.0, >= 0.0.9)
-    yard (0.9.16)
+    yard (0.9.19)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
-  byebug (~> 10.0.2)
+  byebug (~> 11.0)
   i18n
   liquid (~> 4.0.0)
   netrc (~> 0.11.0)
-  octokit (~> 4.12.0)
+  octokit (~> 4.13.0)
   redcarpet (~> 3.4.0)
   virtus (~> 1.0.5)
   yard (~> 0.9.12)
 
 BUNDLED WITH
-   1.16.0
+   2.0.1
