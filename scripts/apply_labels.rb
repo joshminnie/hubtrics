@@ -90,7 +90,11 @@ begin
       end
 
     labels = labels.reject { |label| label =~ /^(preproduction|production)$/ }
-    labels << pull.base.to_s if %w[production preproduction].include?(pull.base.to_s)
+    if %w[production preproduction].include?(pull.base.to_s)
+      labels << pull.base.to_s
+    elsif pull.base.to_s != 'master'
+      labels << 'feature-branch'
+    end
 
     # Clean up the labels
     labels = labels.compact.sort.uniq
