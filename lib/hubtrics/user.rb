@@ -5,6 +5,7 @@ module Hubtrics
   class User < Hubtrics::Base
     attribute :login, String
     attribute :url, String
+    attribute :date, DateTime
 
     # String representation of the {User}.
     #

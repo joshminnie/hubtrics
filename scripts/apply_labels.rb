@@ -89,7 +89,7 @@ begin
         'review-rejected'
       end
 
-    labels = labels.reject { |label| label =~ /^(preproduction|production)$/ }
+    labels = labels.reject { |label| label =~ /^(preproduction|production|feature-branch)$/ }
     if %w[production preproduction].include?(pull.base.to_s)
       labels << pull.base.to_s
     elsif pull.base.to_s != 'master'
