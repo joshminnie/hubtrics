@@ -79,7 +79,7 @@ begin
       when 'pending' then 'auto-tests-in-progress'
       end
 
-    labels = labels.reject { |label| label =~ /^review-(approved|rejected|incomplete)/ }
+    labels = labels.reject { |label| label =~ /^review-(approved|rejected|incomplete|in-progress)/ }
     labels <<
       if labels.include?('review-in-progress')
         nil
