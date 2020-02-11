@@ -12,6 +12,7 @@ module Hubtrics
     attribute :status, String
     attribute :html_url, String
     attribute :mergeable, Boolean
+    attribute :mergeable_state, String
     attribute :user, Hubtrics::User
     attribute :head, Hubtrics::Commit
     attribute :base, Hubtrics::Commit

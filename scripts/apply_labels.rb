@@ -69,7 +69,8 @@ begin
     labels = original_labels.dup
 
     labels = labels.reject { |label| label =~ /^conflict-with-parent$/ }
-    labels << 'conflict-with-parent' if pull.mergeable == false
+    labels << 'conflict-with-parent' if pull.mergeable_state == 'dirty'
+    labels << 'outdated' if pull.mergeable_state == 'behind'
 
     labels = labels.reject { |label| label =~ /^auto-tests-/ }
     labels <<
