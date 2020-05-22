@@ -11,7 +11,7 @@ module Hubtrics
         branches.each do |branch|
           branch = Hubtrics::Branch.fetch(repository, branch.name)
           print '.'
-          next if branch.protected? || branch.last_commit > (Date.today - 14).to_time.utc || ignore_branch?(branch: branch)
+          next if ignore_branch?(branch)
 
           pulls = client.pulls(repository, head: "#{organization}:#{branch.name}", state: 'open')
           next unless pulls.count < 1
@@ -67,7 +67,7 @@ module Hubtrics
       end
 
       # :reek:FeatureEnvy
-      def ignore_branch?(branch:)
+      def ignore_branch?(branch)
         ignored_branches = [config.dig('branches', 'protected'), config.dig('branches', 'exclude')].flatten.compact
 
         if branch.protected? || branch.last_commit > (Date.today - 14).to_time.utc || ignored_branches.include?(branch.name)
