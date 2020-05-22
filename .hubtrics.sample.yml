@@ -1,0 +1,23 @@
+client:
+  netrc: true
+github:
+  labels:
+    continuous_integration:
+      passing: 'auto-tests-passing'
+      failing: 'auto-tests-failing'
+      pending: 'auto-tests-in-progress'
+    review:
+      passing: 'review-approved'
+      failing: 'review-rejected'
+      pending: 'review-in-progress'
+    conflict: 'conflict-with-parent'
+  branches:
+    protected:
+      - 'master'
+      - 'production'
+      - 'staging'
+      - 'sandbox'
+      - 'training'
+      - 'preproduction'
+    exclude:
+      - '/^v\d{2}(?:\.\d+)+RC$/'

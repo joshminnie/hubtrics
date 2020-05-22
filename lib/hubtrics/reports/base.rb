@@ -4,9 +4,10 @@ module Hubtrics
   module Reports
     class Base
       # Creates an instance of the {Base}.
-      def initialize(client, repository)
+      def initialize(client, repository:, config:)
         @client = client
         @repository = repository
+        @config = config
       end
 
       # Writes the report to a gist, updating if the gist SHA was provided.
@@ -25,7 +26,7 @@ module Hubtrics
 
       private
 
-      attr_reader :client, :repository, :data, :report
+      attr_reader :client, :repository, :data, :report, :config
     end
   end
 end

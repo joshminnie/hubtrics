@@ -6,7 +6,7 @@ require 'yaml'
 
 require_relative '../lib/hubtrics'
 
-options = { client: {} }
+options = { client: {}, github: {} }
 OptionParser.new do |opts|
   opts.banner = 'Usage: apply_labels.rb [options]'
   opts.program_name = 'Hubtrics: GitHub-based reports and metrics'
@@ -14,24 +14,26 @@ OptionParser.new do |opts|
   # -----------------------------------------------------------------------------
   # BEGIN Authentication options
 
-  options[:config] = File.expand_path('../config/secrets.yml', __dir__)
+  options[:config] = File.expand_path('../.hubtrics.yml', __dir__)
   opts.on('-c CONFIG', '--config CONFIG', String, 'Path to config file') do |config|
     options[:config] = config
   end
 
-  config = YAML.load_file(options[:config]).fetch('client', {})
+  config = YAML.load_file(options[:config])
+  client_config = config.fetch('client', {})
+  options[:github] = config.fetch('github', {})
 
-  options[:client][:login] = config.fetch('login', nil)
+  options[:client][:login] = client_config.fetch('login', nil)
   opts.on('--login LOGIN', String, 'Login for your GitHub account') do |login|
     options[:client][:login] = login
   end
 
-  options[:client][:access_token] = config.fetch('access_token', nil)
+  options[:client][:access_token] = client_config.fetch('access_token', nil)
   opts.on('--access-token TOKEN', String, 'OAuth access token for your GitHub account') do |token|
     options[:client][:access_token] = token
   end
 
-  options[:client][:netrc] = config.fetch('netrc', false)
+  options[:client][:netrc] = client_config.fetch('netrc', false)
   opts.on('--[no-]netrc', 'Use .netrc to connect') do |netrc|
     options[:client][:netrc] = netrc
   end
@@ -55,7 +57,7 @@ OptionParser.new do |opts|
 end.parse!
 
 client = Hubtrics.client(options[:client])
-report = Hubtrics::Reports::BranchesWithoutPullsReport.new(client, options[:repository])
+report = Hubtrics::Reports::BranchesWithoutPullsReport.new(client, repository: options[:repository], config: options[:github])
 report.generate
 gist = report.save_to_gist(options[:gist])
 

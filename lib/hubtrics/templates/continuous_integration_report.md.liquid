@@ -23,7 +23,7 @@ _{{ item[1].size }} of {{ total_pulls }} pulls are {{ item[0] }} continuous inte
   <tr>
     <td><a href="https://github.com/{{ pull.repository }}/pull/{{ pull.number }}" title="#{{ pull.number }} - {{ pull.title }}">#{{ pull.number }} - {{ pull.title | truncate: 24, '...' }}</a></td>
     <td><a href="https://github.com/{{ pull.repository }}/tree/{{ pull.base }}" title="{{ pull.base }}">{{ pull.base | truncate: 24, '...' }}</a></td>
-    <td><a href="https://github.com/{{ pull.user }}">@{{ pull.user }}</a></td>
+    <td><a href="https://github.com/{{ pull.repository }}/pulls/{{ pull.user }}">@{{ pull.user }}</a></td>
   </tr>
   {% endfor %}
 </table>

@@ -68,7 +68,7 @@ begin
     original_labels = pull.labels
     labels = original_labels.dup
 
-    labels = labels.reject { |label| label =~ /^conflict-with-parent$/ }
+    labels = labels.reject { |label| label =~ /^conflict-with-parent|outdated$/ }
     labels << 'conflict-with-parent' if pull.mergeable_state == 'dirty'
     labels << 'outdated' if pull.mergeable_state == 'behind'
 

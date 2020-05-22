@@ -1,5 +1,6 @@
 # Configurations
 config/secrets.yml
+.hubtrics.yml
 
 # Generated files
 .byebug_history

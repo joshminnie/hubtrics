@@ -3,7 +3,7 @@ module Hubtrics
   #
   # @see https://developer.github.com/v3/repos/branches
   class Branch < Hubtrics::Base
-    attribute :name, Integer
+    attribute :name, String
     attribute :protected, Boolean
     attribute :commit, Hubtrics::Commit
     attribute :author, Hubtrics::User
