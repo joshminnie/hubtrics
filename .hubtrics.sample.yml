@@ -1,5 +1,8 @@
 client:
-  netrc: true
+  netrc: false
+  login: username # Not needed if you use .netrc file
+  password: password # Not needed if you use .netrc file
+  access_token: access_token # Not needed if you use .netrc file
 github:
   labels:
     continuous_integration:
@@ -14,10 +17,10 @@ github:
   branches:
     protected:
       - 'master'
-      - 'production'
-      - 'staging'
-      - 'sandbox'
-      - 'training'
       - 'preproduction'
+      - 'production'
+      - 'sandbox'
+      - 'staging'
+      - 'training'
     exclude:
       - '/^v\d{2}(?:\.\d+)+RC$/'

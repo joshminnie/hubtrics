@@ -23,6 +23,9 @@ Metrics/MethodLength:
 Style/Alias:
   EnforcedStyle: prefer_alias_method
 
+Style/IfUnlessModifier:
+  Enabled: false
+
 Style/RegexpLiteral:
   Enabled: false
 

@@ -1,0 +1,11 @@
+#! /usr/bin/env ruby
+
+# frozen_string_literal: true
+
+system 'gem install git-up --conservative --no-document'
+system 'gem install bundler --conservative'
+system 'bundle'
+
+if !File.exist?('.hubtrics.yml') || ARGV.include?('--force')
+  system 'cp .hubtrics.sample.yml .hubtrics.yml'
+end
