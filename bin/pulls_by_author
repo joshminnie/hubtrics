@@ -14,7 +14,7 @@ OptionParser.new do |opts|
   # -----------------------------------------------------------------------------
   # BEGIN Authentication options
 
-  options[:config] = File.expand_path('../config/secrets.yml', __dir__)
+  options[:config] = File.expand_path('../.hubtrics.yml', __dir__)
   opts.on('-c CONFIG', '--config CONFIG', String, 'Path to config file') do |config|
     options[:config] = config
   end

@@ -23,8 +23,7 @@ Metrics/MethodLength:
 Style/Alias:
   EnforcedStyle: prefer_alias_method
 
-# We use Yardoc to enforce documentation
-Style/Documentation:
+Style/RegexpLiteral:
   Enabled: false
 
 Style/SymbolArray:

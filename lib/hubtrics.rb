@@ -29,6 +29,7 @@ module Hubtrics
   # :reek:NilCheck { enabled: false }
   def self.client(options = {})
     return @client if defined?(@client)
+
     options.delete_if { |_key, value| value.nil? }
     options = { auto_paginate: true }.merge(options)
     @client = Octokit::Client.new(options)

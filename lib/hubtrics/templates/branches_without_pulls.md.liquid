@@ -1,25 +1,26 @@
 # Branches without Pulls
 
-_{{ total_branches_without_pulls }} of {{ total_branches }} branches are without a corresponding pull request_
+_{{ total_branches_without_pulls }} of {{ total_branches }} branches are without a corresponding pull request._
 
 {% for author_hash in data %}
 {% assign author = author_hash[0] %}
 {% assign branches = author_hash[1] %}
 
 
-### {% if branches.size > 2 %}:warning: {% endif %}@{{ author }}
-{{ branches.size }} branches without pulls
+### {% if branches.size > 2 %}:warning:{% endif %} @{{ author }}
+_{{ branches.size }} branches without pulls._
 
 <table>
   <tr>
     <th>Branch</th>
     <th>Last Commit</th>
-    <th>Base</th>
+    <th colspan="2"></th>
   </tr>
   {% for branch in branches %}
   <tr>
-    <td><a href="https://github.com/{{ repository }}/tree/{{ branch.name }}" title="#{{ branch.name }}">{{ branch.name | truncate: 24, '...' }}</a></td>
+    <td><a href="https://github.com/{{ repository }}/tree/{{ branch.name }}" title="{{ branch.name }}">{{ branch.name | truncate: 24, '...' }}</a></td>
     <td>{{ branch.last_commit }}</td>
+    <td><a href="https://github.com/{{ repository }}/branches/all?query={{ branch.name }}" title="Review branch {{ branch.name }}">Review</a></td>
     <td><a href="https://github.com/{{ repository }}/compare/{{ branch.name }}?expand=1" title="Create new pull request for {{ branch.name }}">Create new pull request</a></td>
   </tr>
   {% endfor %}

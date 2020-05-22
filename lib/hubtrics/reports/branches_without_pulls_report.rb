@@ -11,7 +11,7 @@ module Hubtrics
         branches.each do |branch|
           branch = Hubtrics::Branch.fetch(repository, branch.name)
           print '.'
-          next if branch.protected? || ignore_branch?(branch: branch.name)
+          next if branch.protected? || branch.last_commit > (Date.today - 14).to_time.utc || ignore_branch?(branch: branch)
 
           pulls = client.pulls(repository, head: "#{organization}:#{branch.name}", state: 'open')
           next unless pulls.count < 1
@@ -32,6 +32,8 @@ module Hubtrics
           'total_branches' => branches.count,
           'total_branches_without_pulls' => branches_without_pulls.reduce(0) { |sum, (_key, value)| sum + value.count }
         ).strip
+      rescue Octokit::InternalServerError => e
+        puts e.message
       end
 
       private
@@ -64,17 +66,20 @@ module Hubtrics
         organization
       end
 
+      # :reek:FeatureEnvy
       def ignore_branch?(branch:)
         ignored_branches = [config.dig('branches', 'protected'), config.dig('branches', 'exclude')].flatten.compact
 
-        return true if ignored_branches.include?(branch)
+        if branch.protected? || branch.last_commit > (Date.today - 14).to_time.utc || ignored_branches.include?(branch.name)
+          return true
+        end
 
         ignored_branches.any? do |ignored|
           if ignored.start_with?('/') && ignored.end_with?('/')
             # Remove the leading and trailing characters that signify it's a regexp and then compare.
-            Regexp.new(ignored.gsub(/\A\/|\/\Z/, '')).match?(branch)
+            Regexp.new(ignored.gsub(/\A\/|\/\Z/, '')).match?(branch.name)
           else
-            ignored == branch
+            ignored == branch.name
           end
         end
       end

@@ -14,7 +14,7 @@ OptionParser.new do |opts|
   # -----------------------------------------------------------------------------
   # BEGIN Authentication options
 
-  options[:config] = File.expand_path('../config/secrets.yml', __dir__)
+  options[:config] = File.expand_path('../.hubtrics.yml', __dir__)
   opts.on('-c CONFIG', '--config CONFIG', String, 'Path to config file') do |config|
     options[:config] = config
   end
@@ -109,7 +109,7 @@ begin
       puts "Updated #{pull.number} with #{labels}"
     end
   end
-rescue Octokit::TooManyRequests => too_many_requests
-  puts too_many_requests.response_headers.inspect
-  puts too_many_requests.methods.inspect
+rescue Octokit::TooManyRequests => e
+  puts e.response_headers.inspect
+  puts e.methods.inspect
 end

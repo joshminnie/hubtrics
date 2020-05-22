@@ -56,8 +56,13 @@ OptionParser.new do |opts|
   end
 end.parse!
 
-client = Hubtrics.client(options[:client])
-report = Hubtrics::Reports::BranchesWithoutPullsReport.new(client, repository: options[:repository], config: options[:github])
+Hubtrics.client(options[:client])
+
+report = Hubtrics::Reports::BranchesWithoutPullsReport.new(
+  Hubtrics.client,
+  repository: options[:repository],
+  config: options[:github]
+)
 report.generate
 gist = report.save_to_gist(options[:gist])
 
