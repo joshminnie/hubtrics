@@ -3,7 +3,7 @@ require 'liquid'
 module Hubtrics
   module Reports
     class PullRequestReport < Hubtrics::Reports::Base
-      SEARCH_QUERY = 'is:open is:pr review:approved label:auto-tests-passing label:review-approved label:testing-passes'.freeze
+      SEARCH_QUERY = 'is:open is:pr review:approved label:auto-tests-passing label:review-approved'.freeze
 
       # Generates the report content.
       #
@@ -22,10 +22,10 @@ module Hubtrics
       #
       # @return [Liquid::Template] The {Liquid::Template} which can be used to render the report.
       def template
-        @template ||= [
-          Liquid::Template.parse(File.read(File.expand_path('../templates/pull_requests_report.md.liquid', __dir__))),
-          Liquid::Template.parse(File.read(File.expand_path('../templates/pull_requests_report.csv.liquid', __dir__)))
-        ]
+        @template ||= {
+          markdown: Liquid::Template.parse(File.read(File.expand_path('../templates/pull_requests_report.md.liquid', __dir__))),
+          csv: Liquid::Template.parse(File.read(File.expand_path('../templates/pull_requests_report.csv.liquid', __dir__)))
+        }
       end
 
       # Gets the report title.
@@ -40,8 +40,8 @@ module Hubtrics
       # @return [Hash] The file hash for the Gist.
       def files
         {
-          '1-pulls.md' => { content: template.first.render(data) },
-          '2-pulls.csv' => { content: template.last.render(data) }
+          '1-pulls.md' => { content: template[:markdown].render(data) },
+          '2-pulls.csv' => { content: template[:csv].render(data) }
         }
       end
     end

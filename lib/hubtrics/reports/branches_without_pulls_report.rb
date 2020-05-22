@@ -2,6 +2,9 @@ require 'liquid'
 
 module Hubtrics
   module Reports
+    # Generates a report showing how many branches without pull requests exist on the repository. This is helpful to call out to
+    # those developers who started those branches to see them through to the end of the development process and keep your
+    # repository clean.
     class BranchesWithoutPullsReport < Hubtrics::Reports::Base
       def generate
         branches = client.branches(repository, protected: false)
@@ -26,14 +29,14 @@ module Hubtrics
 
         puts ''
 
-        @report = template.render(
+        @data = {
           'data' => branches_without_pulls,
           'repository' => repository,
           'total_branches' => branches.count,
           'total_branches_without_pulls' => branches_without_pulls.reduce(0) { |sum, (_key, value)| sum + value.count }
-        ).strip
+        }
       rescue Octokit::InternalServerError => e
-        puts e.message
+        puts '', 'Unable to finish request, GitHub responded with an error', e.message
       end
 
       private
@@ -42,9 +45,10 @@ module Hubtrics
       #
       # @return [Liquid::Template] The {Liquid::Template} which can be used to render the report.
       def template
-        @template ||= Liquid::Template.parse(
-          File.read(File.expand_path('../templates/branches_without_pulls.md.liquid', __dir__))
-        )
+        @template ||= {
+          markdown: self.class.resolve_liquid_template('../templates/branches_without_pulls.md.liquid'),
+          csv: self.class.resolve_liquid_template('../templates/branches_without_pulls.csv.liquid')
+        }
       end
 
       # Gets the report title.
@@ -58,7 +62,10 @@ module Hubtrics
       #
       # @return [Hash] The file hash for the Gist.
       def files
-        { 'branches_without_pulls.md' => { content: report } }
+        {
+          '1-branches_without_pulls.md' => { content: template[:markdown].render(data).strip },
+          '2-branches_without_pulls.csv' => { content: template[:csv].render(data).strip }
+        }
       end
 
       def organization

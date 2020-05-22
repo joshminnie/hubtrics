@@ -1,0 +1,8 @@
+Author, Branch, Last Commit
+{% for author_hash in data %}
+{% assign author = author_hash[0] %}
+{% assign branches = author_hash[1] %}
+{% for branch in branches %}
+@{{ author }},{{ branch.name }},{{ branch.last_commit }}
+{%- endfor -%}
+{%- endfor -%}
