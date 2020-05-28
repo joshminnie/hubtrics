@@ -30,7 +30,7 @@ module Hubtrics
         puts ''
 
         @data = {
-          'data' => branches_without_pulls,
+          'data' => branches_without_pulls.sort_by { |_, v| -v.size },
           'repository' => repository,
           'total_branches' => branches.count,
           'total_branches_without_pulls' => branches_without_pulls.reduce(0) { |sum, (_key, value)| sum + value.count }
