@@ -7,6 +7,8 @@ module Hubtrics
     # repository clean.
     class BranchesWithoutPullsReport < Hubtrics::Reports::Base
       def generate
+        puts "Grace period: #{grace_period} days"
+
         branches = client.branches(repository, protected: false)
 
         branches_without_pulls = {}
@@ -77,7 +79,9 @@ module Hubtrics
       def ignore_branch?(branch)
         ignored_branches = [config.dig('branches', 'protected'), config.dig('branches', 'exclude')].flatten.compact
 
-        if branch.protected? || branch.last_commit > (Date.today - 14).to_time.utc || ignored_branches.include?(branch.name)
+        if branch.protected? ||
+           branch.last_commit > (Date.today - grace_period).to_time.utc ||
+           ignored_branches.include?(branch.name)
           return true
         end
 
@@ -89,6 +93,10 @@ module Hubtrics
             ignored == branch.name
           end
         end
+      end
+
+      def grace_period
+        options[:grace_period]
       end
     end
   end

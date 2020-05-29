@@ -16,18 +16,18 @@ module Hubtrics
       # @param gist [String] The SHA of the gist to update.
       # @return [Sawyer::Resource] Gist info.
       def save_to_gist(gist = nil)
-        options = { description: title, public: false, files: files }
+        gist_options = { description: title, public: false, files: files }
 
         if gist
-          client.edit_gist(gist, options)
+          client.edit_gist(gist, gist_options)
         else
-          client.create_gist(options)
+          client.create_gist(gist_options)
         end
       end
 
       private
 
-      attr_reader :client, :repository, :data, :report, :config
+      attr_reader :client, :repository, :data, :report, :config, :options
 
       class << self
         def resolve_liquid_template(relative_path)
