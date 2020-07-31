@@ -1,6 +1,7 @@
 require 'octokit'
 require 'yaml'
 require 'virtus'
+require 'paint'
 
 # Hubtrics is a metrics reporting and analysis tool.
 module Hubtrics
@@ -38,7 +39,9 @@ module Hubtrics
   # Renders a message to STDOUT wrapped with the {DIVIDER}.
   # @param message [String] Message to render.
   # @return [void]
-  def self.say(message)
-    puts DIVIDER, message, DIVIDER
+  def self.say(message, *paint)
+    paint ||= [:white]
+
+    puts '', Paint[message, *paint], ''
   end
 end

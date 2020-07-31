@@ -1,4 +1,7 @@
+# frozen_string_literal: true
+
 require 'liquid'
+require 'paint'
 
 module Hubtrics
   module Reports
@@ -7,7 +10,7 @@ module Hubtrics
     # repository clean.
     class BranchesWithoutPullsReport < Hubtrics::Reports::Base
       def generate
-        puts "Grace period: #{grace_period} days"
+        puts Paint["Grace period: #{grace_period} days", :blue]
 
         branches = client.branches(repository, protected: false)
 
@@ -15,8 +18,11 @@ module Hubtrics
 
         branches.each do |branch|
           branch = Hubtrics::Branch.fetch(repository, branch.name)
-          print '.'
-          next if ignore_branch?(branch)
+          if ignore_branch?(branch)
+            print Paint['*', :yellow]
+          else
+            print Paint['.', :green]
+          end
 
           pulls = client.pulls(repository, head: "#{organization}:#{branch.name}", state: 'open')
           next unless pulls.count < 1

@@ -16,6 +16,7 @@ module Hubtrics
     attribute :user, Hubtrics::User
     attribute :head, Hubtrics::Commit
     attribute :base, Hubtrics::Commit
+    attribute :commits, Integer
 
     # Fetches the pull request from the specified repository.
     #

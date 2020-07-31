@@ -11,12 +11,14 @@ module Hubtrics
 
     alias_method :protected?, :protected
 
-    # Fetches the pull request from the specified repository.
-    #
-    # @return [PullRequest] The pull request.
-    def self.fetch(repository, branch_name)
-      branch = Hubtrics.client.branch(repository, branch_name)
-      new(branch)
+    class << self
+      # Fetches the pull request from the specified repository.
+      #
+      # @return [PullRequest] The pull request.
+      def fetch(repository, branch_name)
+        branch = Hubtrics.client.branch(repository, branch_name)
+        new(branch)
+      end
     end
 
     def initialize(*args)

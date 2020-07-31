@@ -19,19 +19,21 @@ OptionParser.new do |opts|
     options[:config] = config
   end
 
-  config = YAML.load_file(options[:config]).fetch('client', {})
+  config = YAML.load_file(options[:config])
+  client_config = config.fetch('client', {})
+  options[:github] = config.fetch('github', {})
 
-  options[:client][:login] = config.fetch('login', nil)
+  options[:client][:login] = client_config.fetch('login', nil)
   opts.on('--login LOGIN', String, 'Login for your GitHub account') do |login|
     options[:client][:login] = login
   end
 
-  options[:client][:access_token] = config.fetch('access_token', nil)
+  options[:client][:access_token] = client_config.fetch('access_token', nil)
   opts.on('--access-token TOKEN', String, 'OAuth access token for your GitHub account') do |token|
     options[:client][:access_token] = token
   end
 
-  options[:client][:netrc] = config.fetch('netrc', false)
+  options[:client][:netrc] = client_config.fetch('netrc', false)
   opts.on('--[no-]netrc', 'Use .netrc to connect') do |netrc|
     options[:client][:netrc] = netrc
   end
@@ -90,11 +92,18 @@ begin
         'review-rejected'
       end
 
-    labels = labels.reject { |label| label =~ /^(preproduction|production|feature-branch)$/ }
+    labels = labels.reject { |label| label =~ /^(preproduction|production|feature-branch|release)$/ }
     if %w[production preproduction].include?(pull.base.to_s)
       labels << pull.base.to_s
-    elsif pull.base.to_s != 'master'
+    elsif pull.head.to_s =~ /v\d{2}\.\d+RC/
+      labels << 'release'
+    elsif pull.base.to_s != 'master' && pull.base.to_s !~ /v\d{2}\.\d+RC/ && !labels.include?('release')
       labels << 'feature-branch'
+    end
+
+    labels = labels.reject { |label| label =~ /^heavy-churn$/ }
+    if pull.commits > 30 && !labels.include?('release') && !labels.include?('feature-branch') && !labels.include?('project-branch')
+      labels << 'heavy-churn'
     end
 
     # Clean up the labels

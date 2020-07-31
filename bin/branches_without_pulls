@@ -46,6 +46,10 @@ OptionParser.new do |opts|
     options[:org], options[:repo] = repository.split('/')
   end
 
+  opts.on('--grace-period GRACE_PERIOD', Integer, 'Grace period in days before considering the branch stale') do |grace_period|
+    options[:grace_period] = grace_period
+  end
+
   opts.on('--gist GIST', String, 'Update the Gist specified by the SHA provided') do |gist|
     options[:gist] = gist
   end
@@ -61,9 +65,13 @@ Hubtrics.client(options[:client])
 report = Hubtrics::Reports::BranchesWithoutPullsReport.new(
   Hubtrics.client,
   repository: options[:repository],
-  config: options[:github]
+  config: options[:github],
+  options: {
+    grace_period: options.fetch(:grace_period, 14),
+    gist: options.fetch(:gist, nil)
+  }
 )
 report.generate
 gist = report.save_to_gist(options[:gist])
 
-Hubtrics.say("Report was written to:\n#{gist.html_url}")
+Hubtrics.say("Report was written to:\n#{gist.html_url}", :yellow)
