@@ -95,9 +95,9 @@ begin
     labels = labels.reject { |label| label =~ /^(preproduction|production|feature-branch|release)$/ }
     if %w[production preproduction].include?(pull.base.to_s)
       labels << pull.base.to_s
-    elsif pull.head.to_s =~ /v\d{2}\.\d+RC/
+    elsif pull.head.to_s =~ /^v\d{2}\.\d+RC\d?$/
       labels << 'release'
-    elsif pull.base.to_s != 'master' && pull.base.to_s !~ /v\d{2}\.\d+RC/ && !labels.include?('release')
+    elsif pull.base.to_s != 'master' && pull.base.to_s !~ /^v\d{2}\.\d+RC\d?$/ && !labels.include?('release')
       labels << 'feature-branch'
     end
 
