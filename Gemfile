@@ -10,7 +10,7 @@ gem 'hashie', '~> 4.1.0'
 
 gem 'byebug', '~> 11.0', require: false
 gem 'rb-readline' # supporting library for byebug
-gem 'redcarpet', '~> 3.5.0', require: false
+gem 'redcarpet', '~> 3.5.1', require: false
 gem 'yard', '~> 0.9.0', require: false
 
 # Code linting
