@@ -12,6 +12,8 @@ module Hubtrics
   require_relative 'hubtrics/pull_request'
   require_relative 'hubtrics/branch'
 
+  require_relative 'hubtrics/parser'
+
   require_relative 'hubtrics/reports/base'
   require_relative 'hubtrics/reports/closed_pull_report'
   require_relative 'hubtrics/reports/pull_request_report'

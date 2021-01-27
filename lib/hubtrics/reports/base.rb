@@ -1,8 +1,19 @@
+# frozen_string_literal: true
+
 require 'liquid'
 
+# :reek:UnusedParameters
+# rubocop:disable Lint/UnusedMethodArgument
 module Hubtrics
   module Reports
+    # Base class for all reports.
     class Base
+      class << self
+        def render(client:, repository:, config:, options: {})
+          raise NotImplementedError, 'This method has not been implemented by the inheriting class.'
+        end
+      end
+
       # Creates an instance of the {Base}.
       def initialize(client, repository:, config:, options: {})
         @client = client
@@ -37,3 +48,4 @@ module Hubtrics
     end
   end
 end
+# rubocop:enable Lint/UnusedMethodArgument

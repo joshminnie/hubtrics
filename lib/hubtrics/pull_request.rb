@@ -17,6 +17,10 @@ module Hubtrics
     attribute :head, Hubtrics::Commit
     attribute :base, Hubtrics::Commit
     attribute :commits, Integer
+    attribute :comments, Integer
+    attribute :review_comments, Integer
+    attribute :created_at, Time
+    attribute :updated_at, Time
 
     # Fetches the pull request from the specified repository.
     #

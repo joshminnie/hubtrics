@@ -3,6 +3,8 @@ exclude_paths:
 detectors:
   DuplicateMethodCall:
     max_calls: 3
+  LongParameterList:
+    max_params: 5
   NestedIterators:
     max_allowed_nesting: 2
   IrresponsibleModule:
