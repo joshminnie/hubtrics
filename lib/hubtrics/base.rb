@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Hubtrics
   # Represents the basis for all {Hubtrics} models.
   class Base

@@ -47,7 +47,7 @@ GEM
       rainbow (>= 2.0, < 4.0)
     regexp_parser (2.0.3)
     rexml (3.2.4)
-    rubocop (1.8.1)
+    rubocop (1.9.0)
       parallel (~> 1.10)
       parser (>= 3.0.0.0)
       rainbow (>= 2.2.2, < 4.0)
@@ -84,14 +84,14 @@ DEPENDENCIES
   octokit (~> 4.20.0)
   paint (~> 2.2.0)
   rb-readline
-  redcarpet (~> 3.5.0)
+  redcarpet (~> 3.5.1)
   reek (~> 6.0.2)
-  rubocop (~> 1.8.1)
+  rubocop (~> 1.9)
   virtus (~> 1.0.5)
   yard (~> 0.9.0)
 
 RUBY VERSION
-   ruby 2.4.6p354
+   ruby 2.4.10p364
 
 BUNDLED WITH
    1.17.3

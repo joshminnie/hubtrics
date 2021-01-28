@@ -1,21 +1,22 @@
 AllCops:
   DisplayCopNames: true
+  NewCops: enable
 
 # -------------------------------------------------------------------------------------------------
 # EXCEPTIONS
 # These are rules that we adapted that are different from the default behavior of Rubocop.
 # -------------------------------------------------------------------------------------------------
 
+# We like a little longer line support, and 131 is an awesome number.
+# See https://en.wikipedia.org/wiki/131_(number)
+Layout/LineLength:
+  Max: 131
+
 Metrics/AbcSize:
   Enabled: false
 
 Metrics/BlockLength:
   Enabled: false
-
-# We like a little longer line support, and 131 is an awesome number.
-# See https://en.wikipedia.org/wiki/131_(number)
-Metrics/LineLength:
-  Max: 131
 
 Metrics/MethodLength:
   Enabled: false

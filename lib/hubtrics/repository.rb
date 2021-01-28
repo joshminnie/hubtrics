@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Hubtrics
   # Represents a repository from the GitHub API.
   #

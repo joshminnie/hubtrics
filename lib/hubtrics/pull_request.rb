@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Hubtrics
   # Represents a pull request from the GitHub API.
   #

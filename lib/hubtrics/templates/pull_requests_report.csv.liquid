@@ -1,4 +1,0 @@
-Pull, Title, Base, Head, User
-{% for pull in data %}
-{{ pull.number }},"{{ pull.title | replace: '"', '' }}",{{ pull.base }},{{ pull.head }},@{{ pull.user }}
-{%- endfor -%}

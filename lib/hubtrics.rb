@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'octokit'
 require 'yaml'
 require 'virtus'
@@ -15,9 +17,6 @@ module Hubtrics
   require_relative 'hubtrics/parser'
 
   require_relative 'hubtrics/reports/base'
-  require_relative 'hubtrics/reports/closed_pull_report'
-  require_relative 'hubtrics/reports/pull_request_report'
-  require_relative 'hubtrics/reports/continuous_integration_report'
   require_relative 'hubtrics/reports/branches_without_pulls_report'
 
   # Common output divider.

@@ -1,7 +1,10 @@
+# frozen_string_literal: true
+
 require 'liquid'
 
 module Hubtrics
   module Reports
+    # Report to get the open pull data grouped by author.
     class PullsByAuthorReport < Hubtrics::Reports::Base
       # Generates the report content.
       #
