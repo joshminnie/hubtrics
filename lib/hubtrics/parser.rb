@@ -13,7 +13,8 @@ module Hubtrics
       @options = {
         config: File.expand_path('../../.hubtrics.yml', __dir__),
         client: {},
-        github: {}
+        github: {},
+        rules: {}
       }
       @banner = banner
       @program_name = program_name
@@ -56,6 +57,7 @@ module Hubtrics
       config = YAML.load_file(options[:config])
       options[:client] = config.fetch(:client, {})
       options[:github] = config.fetch(:github, {})
+      options[:rules] = config.fetch(:rules, {})
 
       options
     end

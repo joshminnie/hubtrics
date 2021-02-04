@@ -1,26 +1,65 @@
-client:
-  netrc: false
-  login: username # Not needed if you use .netrc file
-  password: password # Not needed if you use .netrc file
-  access_token: access_token # Not needed if you use .netrc file
-github:
-  labels:
-    continuous_integration:
-      passing: 'auto-tests-passing'
-      failing: 'auto-tests-failing'
-      pending: 'auto-tests-in-progress'
-    review:
-      passing: 'review-approved'
-      failing: 'review-rejected'
-      pending: 'review-in-progress'
-    conflict: 'conflict-with-parent'
-  branches:
-    protected:
+:client:
+  :netrc: false
+  :login: username # Not needed if you use .netrc file
+  :password: password # Not needed if you use .netrc file
+  :access_token: access_token # Not needed if you use .netrc file
+:github:
+  :labels:
+    :continuous_integration:
+      :passing:
+        :name: 'auto-tests-passing'
+        :color: ''
+        :enabled: true
+      :failing:
+        :name: 'auto-tests-failing'
+        :color: ''
+        :enabled: true
+      :pending:
+        :name: 'auto-tests-in-progress'
+        :color: ''
+        :enabled: true
+    :review:
+      :passing:
+        :name: 'review-approved'
+        :color: ''
+        :enabled: true
+      :failing:
+        :name: 'review-rejected'
+        :color: ''
+        :enabled: true
+      :pending:
+        :name: 'review-in-progress'
+        :color: ''
+        :enabled: true
+    :unresolved:
+      :conflict:
+        :name: 'conflict-with-parent'
+        :color: ''
+        :enabled: true
+      :outdated:
+        :name: 'outdated'
+        :color: ''
+        :enabled: false
+    :release:
+      :name: 'release'
+      :color: ''
+      :enabled: true
+    :feature_branch:
+      :name: 'feature-branch'
+      :color: ''
+      :enabled: true
+:rules:
+  :branches:
+    :protected:
       - 'master'
       - 'preproduction'
       - 'production'
       - 'sandbox'
       - 'staging'
       - 'training'
-    exclude:
+    :exclude:
       - '/^v\d{2}(?:\.\d+)+RC$/'
+    :pulls:
+      :title:
+        - '/^v(\d{2}(\.\d+)+) Release$/'
+        - '/^\[(?<ticket>EPAY-\d+)(,\s(?&ticket))*\]\s([A-Z][\w\s]+)$/'

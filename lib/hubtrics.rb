@@ -16,6 +16,8 @@ module Hubtrics
 
   require_relative 'hubtrics/parser'
 
+  require_relative 'hubtrics/rules/rule'
+
   require_relative 'hubtrics/reports/base'
   require_relative 'hubtrics/reports/branches_without_pulls_report'
 

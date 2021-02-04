@@ -1,0 +1,103 @@
+#! /usr/bin/env ruby
+
+# frozen_string_literal: true
+
+require 'octokit'
+require 'optparse'
+require 'yaml'
+
+require_relative '../lib/hubtrics'
+
+parser = Hubtrics::Parser.new(banner: 'Usage: apply_labels [options]')
+options = parser.parse(ARGV)
+
+begin
+  client = Hubtrics.client(options[:client])
+  pulls = client.pulls(options[:repository], state: 'open')
+
+  query = "repo:#{options[:repository]} is:open is:pr"
+
+  approved_pulls = client.search_issues("#{query} review:approved").items.map(&:number)
+  rejected_pulls = client.search_issues("#{query} review:changes_requested").items.map(&:number)
+
+  pulls.each do |pull|
+    pull = Hubtrics::PullRequest.fetch(options[:repository], pull.number)
+
+    title_rules = options.dig(:rules, :pulls, :title).map { |rule| Hubtrics::Rules::Rule.new(rule) }
+
+    if title_rules.none? { |rule| rule.valid?(pull.title) }
+      client.close_pull_request(options[:repository], pull.number)
+      puts Paint["Pull #{pull.number} failed title validation: #{pull.title}", :red]
+      next
+    end
+
+    original_labels = pull.labels
+    labels = original_labels.dup
+
+    labels = labels.reject { |label| label =~ /^conflict-with-parent|outdated$/ }
+    labels << 'conflict-with-parent' if pull.mergeable_state == 'dirty'
+    labels << 'outdated' if pull.mergeable_state == 'behind'
+
+    labels = labels.reject { |label| label =~ /^auto-tests-/ }
+
+    labels <<
+      case pull.status
+      when 'passing' then 'auto-tests-passing'
+      when 'failing' then 'auto-tests-failing'
+      when 'pending' then 'auto-tests-in-progress'
+      end
+
+    labels = labels.reject { |label| label =~ /^review-(approved|rejected|incomplete|in-progress)/ }
+    labels <<
+      if labels.include?('review-in-progress')
+        nil
+      elsif approved_pulls.include?(pull.number)
+        'review-approved'
+      elsif rejected_pulls.include?(pull.number)
+        'review-rejected'
+      end
+
+    labels = labels.reject { |label| label =~ /^(preproduction|production|feature-branch|release)$/ }
+    if pull.head.to_s =~ /^v\d{2}(\.\d+)+RC\d?$/
+      labels << 'release'
+    elsif %w[production preproduction].include?(pull.base.to_s)
+      labels << pull.base.to_s
+    elsif pull.base.to_s != 'master' && pull.base.to_s !~ /^v\d{2}(\.\d+)+RC\d?$/ && !labels.include?('release')
+      labels << 'feature-branch'
+    end
+
+    labels = labels.reject { |label| label =~ /^heavy-churn$/ }
+    if labels.none? { |label| %w[release project-branch feature-branch].include?(label) } && pull.commits > 30 ||
+       labels.none? { |label| %w[release project-branch].include?(label) } && pull.comments + pull.review_comments > 30
+      labels << 'heavy-churn'
+    end
+
+    labels = labels.reject { |label| label =~ /^stale$/ }
+    if pull.updated_at < (Date.today - 14).to_time.utc
+      labels << 'stale'
+    end
+
+    # Clean up the labels
+    labels = labels.compact.sort.uniq
+
+    next if original_labels == labels
+
+    if options[:dry_run]
+      puts "Update #{pull.number}: #{original_labels} with #{labels.sort}"
+    else
+      client.replace_all_labels(pull.repository, pull.number, labels)
+      color =
+        if %w[review-approved auto-tests-passing].all? { |l| labels.include?(l) }
+          :green
+        elsif %w[review-rejected auto-tests-failing].all? { |l| labels.include?(l) }
+          :red
+        elsif %w[review-rejected auto-tests-failing].any? { |l| labels.include?(l) }
+          :yellow
+        end
+      puts Paint["Updated #{pull.number} with #{labels}", color]
+    end
+  end
+rescue Octokit::TooManyRequests => e
+  puts e.response_headers.inspect
+  puts e.methods.inspect
+end
