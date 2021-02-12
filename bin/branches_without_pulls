@@ -1,69 +1,23 @@
 #! /usr/bin/env ruby
 
+# frozen_string_literal: true
+
 require 'octokit'
 require 'optparse'
 require 'yaml'
 
 require_relative '../lib/hubtrics'
 
-options = { client: {}, github: {} }
-OptionParser.new do |opts|
-  opts.banner = 'Usage: apply_labels.rb [options]'
-  opts.program_name = 'Hubtrics: GitHub-based reports and metrics'
+parser = Hubtrics::Parser.new(
+  banner: "Usage: #{File.basename(__FILE__)} [options]",
+  switches: ['--grace-period']
+)
+options = parser.parse(ARGV)
 
-  # -----------------------------------------------------------------------------
-  # BEGIN Authentication options
-
-  options[:config] = File.expand_path('../.hubtrics.yml', __dir__)
-  opts.on('-c CONFIG', '--config CONFIG', String, 'Path to config file') do |config|
-    options[:config] = config
-  end
-
-  config = YAML.load_file(options[:config])
-  client_config = config.fetch('client', {})
-  options[:github] = config.fetch('github', {})
-
-  options[:client][:login] = client_config.fetch('login', nil)
-  opts.on('--login LOGIN', String, 'Login for your GitHub account') do |login|
-    options[:client][:login] = login
-  end
-
-  options[:client][:access_token] = client_config.fetch('access_token', nil)
-  opts.on('--access-token TOKEN', String, 'OAuth access token for your GitHub account') do |token|
-    options[:client][:access_token] = token
-  end
-
-  options[:client][:netrc] = client_config.fetch('netrc', false)
-  opts.on('--[no-]netrc', 'Use .netrc to connect') do |netrc|
-    options[:client][:netrc] = netrc
-  end
-
-  # END Authentication option
-  # -----------------------------------------------------------------------------
-
-  opts.on('--repository REPOSITORY', String, 'Repository to run this report against') do |repository|
-    options[:repository] = repository
-    options[:org], options[:repo] = repository.split('/')
-  end
-
-  opts.on('--grace-period GRACE_PERIOD', Integer, 'Grace period in days before considering the branch stale') do |grace_period|
-    options[:grace_period] = grace_period
-  end
-
-  opts.on('--gist GIST', String, 'Update the Gist specified by the SHA provided') do |gist|
-    options[:gist] = gist
-  end
-
-  opts.on('-h', '--help', 'Display this screen') do
-    puts opts
-    exit
-  end
-end.parse!
-
-Hubtrics.client(options[:client])
+client = Hubtrics.client(options[:client])
 
 report = Hubtrics::Reports::BranchesWithoutPullsReport.new(
-  Hubtrics.client,
+  client,
   repository: options[:repository],
   config: options[:github],
   options: {

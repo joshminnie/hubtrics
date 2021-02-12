@@ -7,9 +7,9 @@ module Hubtrics
     require 'optparse'
     require 'yaml'
 
-    attr_reader :options
+    attr_reader :options, :switches
 
-    def initialize(banner:, program_name: nil)
+    def initialize(banner:, program_name: nil, switches: [])
       @options = {
         config: File.expand_path('../../.hubtrics.yml', __dir__),
         client: {},
@@ -18,6 +18,7 @@ module Hubtrics
       }
       @banner = banner
       @program_name = program_name
+      @switches = switches
     end
 
     def parse(args)
@@ -34,12 +35,14 @@ module Hubtrics
           options[:org], options[:repo] = repository.split('/')
         end
 
-        opts.on(
-          '--grace-period GRACE_PERIOD',
-          Integer,
-          'Grace period in days before considering the branch stale'
-        ) do |grace_period|
-          options[:grace_period] = grace_period
+        if switches.include?('--grace-period')
+          opts.on(
+            '--grace-period GRACE_PERIOD',
+            Integer,
+            'Grace period in days before considering the branch stale'
+          ) do |grace_period|
+            options[:grace_period] = grace_period
+          end
         end
 
         opts.on('--gist GIST', String, 'Update the Gist specified by the SHA provided') do |gist|

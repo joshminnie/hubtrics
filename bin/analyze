@@ -8,7 +8,7 @@ require 'yaml'
 
 require_relative '../lib/hubtrics'
 
-parser = Hubtrics::Parser.new(banner: 'Usage: apply_labels [options]')
+parser = Hubtrics::Parser.new(banner: "Usage: #{File.basename(__FILE__)} [options]")
 options = parser.parse(ARGV)
 
 begin
