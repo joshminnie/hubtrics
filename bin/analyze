@@ -26,8 +26,16 @@ begin
     title_rules = options.dig(:rules, :pulls, :title).map { |rule| Hubtrics::Rules::Rule.new(rule) }
 
     if title_rules.none? { |rule| rule.valid?(pull.title) }
-      client.close_pull_request(options[:repository], pull.number)
       puts Paint["Pull #{pull.number} failed title validation: #{pull.title}", :red]
+
+      comment = <<~COMMENT
+        _Pull closed automatically due to title validation failure._
+
+        `#{pull.title}` is not formatted correctly. Please review the [coding guidelines](https://github.com/verifyvalid/guidelines/blob/master/docs/coding-guidelines/git.md#pull-requests) if you are unsure of the format expected.
+      COMMENT
+
+      client.add_comment(options[:repository], pull.number, comment)
+      client.close_pull_request(options[:repository], pull.number)
       next
     end
 
