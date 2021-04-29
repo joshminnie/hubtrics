@@ -21,6 +21,7 @@ module Hubtrics
       @switches = switches
     end
 
+    # :reek:NestedIterators
     def parse(args)
       parser = OptionParser.new do |opts|
         opts.banner = banner
@@ -35,14 +36,9 @@ module Hubtrics
           options[:org], options[:repo] = repository.split('/')
         end
 
-        if switches.include?('--grace-period')
-          opts.on(
-            '--grace-period GRACE_PERIOD',
-            Integer,
-            'Grace period in days before considering the branch stale'
-          ) do |grace_period|
-            options[:grace_period] = grace_period
-          end
+        # Includes dynamic switches that can be passed through from each command.
+        switches.each do |switch|
+          opts.on(*switch[:definition]) { |value| options[switch[:switch]] = value }
         end
 
         opts.on('--gist GIST', String, 'Update the Gist specified by the SHA provided') do |gist|

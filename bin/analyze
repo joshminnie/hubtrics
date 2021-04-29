@@ -12,6 +12,8 @@ parser = Hubtrics::Parser.new(banner: "Usage: #{File.basename(__FILE__)} [option
 options = parser.parse(ARGV)
 
 begin
+  puts Paint["Analyzing #{options[:repository]}...", :blue]
+
   client = Hubtrics.client(options[:client])
   pulls = client.pulls(options[:repository], state: 'open')
 
@@ -105,7 +107,9 @@ begin
       puts Paint["Updated #{pull.number} with #{labels}", color]
     end
   end
+
+  puts Paint["Analysis of #{options[:repository]} complete.\n", :blue]
 rescue Octokit::TooManyRequests => e
-  puts e.response_headers.inspect
-  puts e.methods.inspect
+  puts Paint[e.message, :red]
+  puts Paint[e.response_headers.inspect, :red]
 end

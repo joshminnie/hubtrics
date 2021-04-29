@@ -5,22 +5,23 @@ require 'yaml'
 require 'virtus'
 require 'paint'
 
+require_relative 'hubtrics/configuration'
+require_relative 'hubtrics/base'
+require_relative 'hubtrics/user'
+require_relative 'hubtrics/repository'
+require_relative 'hubtrics/commit'
+require_relative 'hubtrics/pull_request'
+require_relative 'hubtrics/branch'
+
+require_relative 'hubtrics/parser'
+
+require_relative 'hubtrics/rules/rule'
+
+require_relative 'hubtrics/reports/base'
+require_relative 'hubtrics/reports/branches_without_pulls_report'
+
 # Hubtrics is a metrics reporting and analysis tool.
 module Hubtrics
-  require_relative 'hubtrics/base'
-  require_relative 'hubtrics/user'
-  require_relative 'hubtrics/repository'
-  require_relative 'hubtrics/commit'
-  require_relative 'hubtrics/pull_request'
-  require_relative 'hubtrics/branch'
-
-  require_relative 'hubtrics/parser'
-
-  require_relative 'hubtrics/rules/rule'
-
-  require_relative 'hubtrics/reports/base'
-  require_relative 'hubtrics/reports/branches_without_pulls_report'
-
   # Common output divider.
   # @return [String] Common output divider.
   DIVIDER = '-' * 72

@@ -10,7 +10,12 @@ require_relative '../lib/hubtrics'
 
 parser = Hubtrics::Parser.new(
   banner: "Usage: #{File.basename(__FILE__)} [options]",
-  switches: ['--grace-period']
+  switches: [
+    {
+      switch: :grace_period,
+      definition: ['--grace-period GRACE_PERIOD', Integer, 'Grace period in days before considering the branch stale']
+    }
+  ]
 )
 options = parser.parse(ARGV)
 
