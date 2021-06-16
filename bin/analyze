@@ -67,18 +67,18 @@ begin
         'review-rejected'
       end
 
-    labels = labels.reject { |label| label =~ /^(preproduction|production|feature-branch|release)$/ }
+    labels = labels.reject { |label| label =~ /^(preproduction|production|feature-branch|Release)$/ }
     if pull.head.to_s =~ /^v\d{2}(\.\d+)+RC\d?$/
-      labels << 'release'
+      labels << 'Release'
     elsif %w[production preproduction].include?(pull.base.to_s)
       labels << pull.base.to_s
-    elsif pull.base.to_s != 'master' && pull.base.to_s !~ /^v\d{2}(\.\d+)+RC\d?$/ && !labels.include?('release')
+    elsif pull.base.to_s != 'master' && pull.base.to_s !~ /^v\d{2}(\.\d+)+RC\d?$/ && !labels.include?('Release')
       labels << 'feature-branch'
     end
 
     labels = labels.reject { |label| label =~ /^heavy-churn$/ }
-    if labels.none? { |label| %w[release project-branch feature-branch].include?(label) } && pull.commits > 30 ||
-       labels.none? { |label| %w[release project-branch].include?(label) } && pull.comments + pull.review_comments > 30
+    if labels.none? { |label| %w[Release project-branch feature-branch].include?(label) } && pull.commits > 30 ||
+       labels.none? { |label| %w[Release project-branch].include?(label) } && pull.comments + pull.review_comments > 30
       labels << 'heavy-churn'
     end
 
